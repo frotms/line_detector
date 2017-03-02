@@ -1244,7 +1244,9 @@ int EDLineDetector::EDline(image_int8u_p image, LineChains &lines, bool smoothed
 		cout<<"Line Detection not finished"<<endl;
 		return -1;
 	}
-
+	if (edges.numOfEdges == ZERO)
+		return 1;
+	
 	//detect lines
 	unsigned int linePixelID = edges.sId[edges.numOfEdges];
 	lines.xCors.resize(linePixelID);
