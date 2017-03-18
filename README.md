@@ -1,87 +1,94 @@
-# edlines-lsd-line_detector
-line segment line detector(lsd) &amp; edge drawing line detector(edlines)
+# three mainstream line detectors: lsd-lines, ed-lines and hough-lines
 
-test code: main function in TestLineDetectorAlgorithm.cpp
+1. __segment line detector (lsd)__ 
+2. __edge drawing line detector (edlines)__
+3. __hough line detector (standard and probabilistic)__
 
-All original dependencies include Opencv have been removed
-1.line segment detector(lsd) with a scale in vertical and horizonal direction in C, respectively
-2.edge drawing line detector(EDLines) with a scale in vertical and horizonal direction in C++, respectively
+__All original dependencies have been removed. Code could be run  independently.__
+
+1. line segment detector(lsd) with a scale in vertical and horizonal direction in boundingbox, respectively
+2. edge drawing line detector(EDLines) with a scale in vertical and horizonal direction in boundingbox, respectively
+3. hough line detector(standard and probabilistic) with a scale in vertical and horizonal direction in boundingbox, respectively
 
 
 
-EDLines Interface
+__EDLines__ Simple Interface with Scale in Boundingbox
 
-    @param scaleX      When different from 1.0, EDLines will vertically scale the
-                   	   input image by 'scaleX' factor by Gaussian filtering,
-                   	   before detecting line segments.
-                       Example: if scaleX=0.8, the input image will be subsampled
-                       to 80% of its width, before the EDlines detector
-                       is applied.
+    @param src         				image,single channel.
 
-    @param scaleY      When different from 1.0, EDLines will vertically scale the
-				       input image by 'scaleY' factor by Gaussian filtering,
-                       before detecting line segments.
-                       Example: if scaleY=0.8, the input image will be subsampled
-                       to 80% of its width, before the EDlines detector
-                       is applied.
+    @param w           				width of image.
 
-    @param image       Pointer to image_int8u_s.
+    @param h           				height of image.
 
-    @param keyLines    Pointer to an ScaleLineSet where EDLines will store the
-                       lines information.
+    @param scaleX      				downscale factor in X-axis.
 
-    @return            
+    @param scaleY      				downscale factor in Y-axis.
+
+    @param bbox        				boundingbox to detect.
+
+    @param lines      				result.
+
+    @return            				0:ok; 1:error
                        
-int LineDescriptor::Run(float scaleX, float scaleY, 
-    image_int8u_p image, ScaleLineSet & keyLines);
-    
+int __EdgeDrawingLineDetector__(unsigned char *src, int w, int h,float scaleX, scaleY, boundingbox_t bbox, std::vector<line_float_t> &lines);
 
 
 
+__LSD__ Simple Interface with Scale in Boundingbox
 
-LSD Simple Interface with Scale
+    @param src         				image,single channel.
 
-    @param n_out       Pointer to an int where LSD will store the number of
-                       line segments detected.
+    @param w           				width of image.
 
-    @param img         Pointer to input image data. It must be an array of
-                       doubles of size w x h, and the pixel at coordinates
-                       (x,y) is obtained by img[x+y*w].
+    @param h           				height of image.
 
-    @param w           w size of the image: the number of columns.
+    @param scaleX      				downscale factor in X-axis.
 
-    @param h           h size of the image: the number of rows.
+    @param scaleY      				downscale factor in Y-axis.
 
-    @param scale_x     When different from 1.0, LSD will horizotally scale the input image 
-                       by 'scale_x' factor by Gaussian filtering, before detecting
-                       line segments.
-                       Example: if scale_x=0.8, the input image will be subsampled
-                       to 80% of its width, before the line segment detector
-                       is applied.
-                       Suggested value: 0.8
-    @param scale_y     When different from 1.0, LSD will vertically scale the input image 
-                       by 'scale_y' factor by Gaussian filtering, before detecting
-                       line segments.
-                       Example: if scale_y=0.8, the input image will be subsampled
-                       to 80% of its height, before the line segment detector
-                       is applied.
-                       Suggested value: 0.8
+    @param bbox       			 	boundingbox to detect.
 
-    @return            A float array of size 7 x n_out, containing the list
-                       of line segments detected. The array contains first
-                       7 values of line segment number 1, then the 7 values
-                       of line segment number 2, and so on, and it finish
-                       by the 7 values of line segment number n_out.
-                       The seven values are:                       
-					   - x1,y1,x2,y2,width,p,-log10(NFA).
+    @param lines       				result.
 
-                       for a line segment from coordinates (x1,y1) to (x2,y2),
-                       a width 'width', an angle precision of p in (0,1) given
-                       by angle_tolerance/180 degree, and NFA value 'NFA'.
-                       If 'out' is the returned pointer, the 7 values of
-                       line segment number 'n+1' are obtained with
-                       'out[7*n+0]' to 'out[7*n+6]'.
-float * lsd_scale(int * n_out, unsigned char * img, int w, int h, float scale_x, float scale_y);
+    @return            				0:ok; 1:error
+                       
+int __LsdLineDetector__(unsigned char *src, int w, int h, float scaleX, float scaleY, boundingbox_t bbox, std::vector<line_float_t> &lines);
+
+__Houghline__ Simple Interface with Scale in Boundingbox
+
+    @param src         				image,single channel.
+
+    @param w           				width of image.
+
+    @param h           				height of image.
+
+    @param scaleX      			 	downscale factor in X-axis.
+
+    @param scaleY      			 	downscale factor in Y-axis.
+
+    @param canny_low_thresh      	lower threshold for the hysteresis procedure in canny operator.
+
+    @param canny_high_thresh      	higher threshold for the hysteresis procedure in canny operator.
+
+    @param hough_rho      			distance resolution of the accumulator in pixels.
+
+    @param hough_theta      		angle resolution of the accumulator in radians.
+
+    @param min_theta_linelength     standard: for standard and multi-scale hough transform, minimum angle to check for lines; propabilistic: minimum line length. Line segments shorter than that are rejected.
+
+    @param max_theta_gap      		standard: for standard and multi-scale hough transform, maximum angle to check for lines; propabilistic: maximum allowed gap between points on the same line to link them.
+
+    @param hough_thresh      		accumulator threshold parameter. only those lines are returned that get enough votes ( >threshold ).
+
+    @param _type      				hough line method: HOUGH_LINE_STANDARD or HOUGH_LINE_PROBABILISTIC
+
+    @param bbox        				boundingbox to detect.
+
+    @param lines       				result.
+
+    @return            				0:ok; 1:error
+                       
+int __HoughLineDetector__(unsigned char *src, int w, int h, float scaleX, float scaleY, float CannyLowThresh, float CannyHighThresh, float HoughRho, float HoughTheta, float MinThetaLinelength, float MaxThetaGap, int HoughThresh, HOUGH_LINE_TYPE_CODE _type, boundingbox_t bbox, std::vector<line_float_t> &lines);
 
 
 LSD is an implementation of the Line Segment Detector on digital
@@ -111,5 +118,8 @@ and in more details in the CMLA Technical Report:
   and pairwise geometric consistency[J]. Journal of Visual Communication and Image Representation, 
   2013, 24(7): 794-805.
   
+  J. Canny. A Computational Approach to Edge Detection, IEEE Trans. on Pattern Analysis and Machine Intelligence, 8(6), pp. 679-698 (1986).
+
+  Matas, J. and Galambos, C. and Kittler, J.V., Robust Detection of Lines Using the Progressive Probabilistic Hough Transform. CVIU 78 1, pp 119-137 (2000).
 
 Copyright (c) 2016-2017 Frotms(frotms@gmail.com)
