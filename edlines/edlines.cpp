@@ -640,7 +640,7 @@ EDLineDetector::~EDLineDetector(){
 
 typedef enum _ORIENT_CODE
 {
-	ORIENT_HORIZONAL = 1,       // horizotal
+	ORIENT_HORIZONTAL = 1,       // horizontal
 	ORIENT_VERTICAL = 2,        // vertical
 
 
@@ -661,7 +661,7 @@ static void sobel_edge(ORIENT_CODE oriention, image_int8u_p src, image_int16s_p 
 	psrc = src->data;
 	switch (oriention)
 	{
-	case ORIENT_HORIZONAL:
+	case ORIENT_HORIZONTAL:
 		for (i = 1; i < src->ysize - 1; i++)
 		{
 			_center = i*src->xsize;
@@ -1135,7 +1135,7 @@ int EDLineDetector::EdgeDrawing(image_int8u_p image, EdgeChains &edgeChains, boo
 		pAnchorY_ = new unsigned int[edgePixelArraySize];
 	}
 
-	mcv_sobel(ORIENT_HORIZONAL, image, dxImg_);
+	mcv_sobel(ORIENT_HORIZONTAL, image, dxImg_);
 	mcv_sobel(ORIENT_VERTICAL, image, dyImg_);
 
 	//compute gradient and direction images

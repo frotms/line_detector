@@ -347,7 +347,7 @@ static void InverseGaussianSamplerLines(pixel_float_t gs_scale, std::vector<line
 //canny
 typedef enum _ORIENT_CODE
 {
-	ORIENT_HORIZONAL = 1,       // 水平方向
+	ORIENT_HORIZONTAL = 1,       // 水平方向
 	ORIENT_VERTICAL = 2,        // 垂直方向
 
 }ORIENT_CODE;
@@ -372,7 +372,7 @@ static short *sobel_edge(unsigned char *src, int w, int h, ORIENT_CODE oriention
 	psrc = src;
 	switch (oriention)
 	{
-	case ORIENT_HORIZONAL:
+	case ORIENT_HORIZONTAL:
 		for (i = 1; i < h - 1; i++)
 		{
 			_center = i*w;
@@ -425,7 +425,7 @@ static void _mcv_Canny(unsigned char *_src, unsigned char *_dst, int w, int h,
 
 	short *dx = NULL;
 	short *dy = NULL;
-	dx = sobel_edge(_src, w, h, ORIENT_HORIZONAL);
+	dx = sobel_edge(_src, w, h, ORIENT_HORIZONTAL);
 	dy = sobel_edge(_src, w, h, ORIENT_VERTICAL);
 
 	int offy = 0;
